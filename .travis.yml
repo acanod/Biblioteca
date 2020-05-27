@@ -1,0 +1,9 @@
+# This enables the 'defaults' to test java applications:
+language: java
+jobs:
+  include:
+    - name: "Java 13"
+      jdk: openjdk13
+cache:
+  directories:
+    - $HOME/.m2
