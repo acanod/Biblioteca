@@ -16,6 +16,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>13</maven.compiler.source>
     <maven.compiler.target>13</maven.compiler.target>
+    <openjfx.Version>14</openjfx.Version>
+    <openjfx.Maven.Version>0.0.4</openjfx.Maven.Version>
     <default-properties-file>${basedir}/src/main/recursos/default.properties</default-properties-file>
     <test-properties-file>${basedir}/src/test/resources/default-test.properties</test-properties-file>
     <config.files.dir>${basedir}/src/main/resources</config.files.dir>
@@ -58,6 +60,36 @@
       <artifactId>datanucleus-rdbms</artifactId>
       <version>5.2.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.controlsfx</groupId>
+      <artifactId>controlsfx</artifactId>
+      <version>11.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.testfx</groupId>
+      <artifactId>openjfx-monocle</artifactId>
+      <version>jdk-12.0.1+2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>${openjfx.Version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>${openjfx.Version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-swing</artifactId>
+      <version>13</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.javafaker</groupId>
+      <artifactId>javafaker</artifactId>
+      <version>1.0.2</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -76,8 +108,49 @@
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
+          <executions>
+            <!--Usamos esto para quitar el test de la base de datos-->
+            <execution>
+              <id>test-db-clean</id>
+              <phase>test-compile</phase>
+              <goals>
+                <goal>clean</goal>
+              </goals>
+              <configuration>
+                <filesets>
+                  <fileset>
+                    <directory>${basedir}/src/test/resources</directory>
+                    <includes>
+                      <include>test-database.db</include>
+                    </includes>
+                  </fileset>
+                </filesets>
+                <excludeDefaultDirectories>true</excludeDefaultDirectories>
+              </configuration>
+            </execution>
+          </executions>
+          <configuration>
+            <filesets>
+              <fileset>
+                <directory>${basedir}</directory>
+                <includes>
+                  <include>*.log</include>
+                  <include>*.ods</include>
+                </includes>
+              </fileset>
+              <!--Se usa para quitar la base de datos para los tests-->
+              <fileset>
+                <directory>${basedir}/src/test/resources</directory>
+                <includes>
+                  <include>test-database.db</include>
+                </includes>
+              </fileset>
+            </filesets>
+          </configuration>
         </plugin>
         <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
+        <!--Usamos esto para copiar el perstience.xml al outputDirectory de los tests y aplicar el valor en el .properties fichero-->
+        <!--Hacemos esto para que los tests puede usar un BD diferente que el APP normal -->
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.1.0</version>
@@ -93,12 +166,12 @@
                 <overwrite>true</overwrite>
                 <useBuildFilters>false</useBuildFilters>
                 <filters>
-                  <!--                              Este fichero contiene el URL para el BD que es solamente para los tests-->
+                  <!--Este fichero contiene la URL para la BD que es solamente para los tests-->
                   <filter>src/test/resources/default-test.properties</filter>
                 </filters>
                 <resources>
                   <resource>
-                    <!--Se usa para copiar el persistence.xml y poner el URL del BD por los test           -->
+                    <!--Se usa para copiar el persistence.xml y poner la URL de la BD por los test-->
                     <filtering>true</filtering>
                     <directory>${basedir}/src/main/resources/META-INF</directory>
                     <includes>
@@ -111,12 +184,25 @@
           </executions>
         </plugin>
         <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-maven-plugin</artifactId>
+          <version>${openjfx.Maven.Version}</version>
+          <configuration>
+            <mainClass>es.deusto.App</mainClass>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.22.1</version>
+          <configuration>
+            <argLine>--add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-exports javafx.graphics/com.sun.glass.ui.PlatformFactory=ALL-UNNAMED
+                        --add-opens javafx.graphics/com.sun.glass.ui=ALL-UNNAMED -Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw
+            </argLine>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>

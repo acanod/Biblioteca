@@ -6,8 +6,8 @@
     <!-- JDO tutorial "unit" -->
     <persistence-unit name="CentralUnit">
         <class>es.deusto.bd.objetos.Autor</class>
-        <class>es.deusto.bd.objetos.Empleado</class>
         <class>es.deusto.bd.objetos.Libreria</class>
+        <class>es.deusto.bd.objetos.Empleado</class>
         <class>es.deusto.bd.objetos.Libro</class>
         <exclude-unlisted-classes/>
         <properties>

@@ -1,5 +1,7 @@
 package es.deusto.bd.objetos;
 
+import java.util.Objects;
+
 import javax.jdo.annotations.*;
 
 @PersistenceCapable
@@ -51,4 +53,30 @@ public class Autor extends InfoObjetos<Autor> {
         return this.id;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Autor other = (Autor) obj;
+        if (this.edad != other.edad) {
+            return false;
+        }
+        if (!Objects.equals(this.nombre, other.nombre)) {
+            return false;
+        }
+        return true;
+    }
 }

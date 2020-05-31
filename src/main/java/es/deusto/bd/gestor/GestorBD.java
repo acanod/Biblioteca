@@ -1,14 +1,9 @@
 package es.deusto.bd.gestor;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.List;
 
-import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.Query;
-import javax.jdo.Transaction;
+import java.util.logging.*;
+import javax.jdo.*;
 
 import org.datanucleus.store.query.QueryInterruptedException;
 
@@ -21,17 +16,13 @@ public class GestorBD {
     private static PersistenceManager pm = null;
     private static Logger logger = null;
 
-    /**
-     * Conectar a la base de datos
-     */
-    private void conectar() {
-        pmf = JDOHelper.getPersistenceManagerFactory("CentralUnit");
+    public GestorBD() {
     }
 
     /**
-     * Instanciar el gestor de base de datos
+     * Obtener una instancia de la base de datos
      * 
-     * @return la instancia del gestor
+     * @return la instancia de la base de datos
      */
     public static GestorBD getInstance() {
         if (instance == null) {
@@ -43,12 +34,19 @@ public class GestorBD {
 
     /**
      * Devuelve el PersistenceManagerFactory
-     * 
+     *
      * @return PersistenceManagerFactory
+     *         <p>
+     *         *
      */
     protected static PersistenceManagerFactory getPMF() {
         getInstance();
         return pmf;
+    }
+
+    private void conectar() {
+        pmf = JDOHelper.getPersistenceManagerFactory("CentralUnit");
+        log(Level.INFO, "Base de datos conectada", null);
     }
 
     /**
@@ -86,7 +84,7 @@ public class GestorBD {
      * @param object que se archiva en la base de datos
      */
     public <T> void store(Class<T> object) {
-        GestorBD.getInstance().storeObjectInDB(object);
+        GestorBD.storeObjectInDB(object);
     }
 
     /**
@@ -95,14 +93,14 @@ public class GestorBD {
      * @param object que se guarda en la base de datos
      * @return <code>T/F</code> Si lo ha guardado
      */
-    public boolean storeObjectInDB(Object object) {
+    public static boolean storeObjectInDB(Object object) {
         if (object == null) {
             throw new NullPointerException("Objecto para guardar es null");
         }
 
         Transaction transaction = null;
         try {
-            pm = getPMF().getPersistenceManager();
+            PersistenceManager pm = pmf.getPersistenceManager();
             transaction = pm.currentTransaction();
             transaction.begin();
             pm.setIgnoreCache(true);
@@ -123,20 +121,44 @@ public class GestorBD {
     }
 
     /**
-     * Un metodo para actualizar un objecto en el BD. Hay que implemntar el
-     * InfoObjetos y sus metodos
+     * Guarda una lista de objetos en la base de datos
+     *
+     * @param <T>     El tipo de objecto
+     * @param objects objectos a guardar
+     */
+    public static <T extends InfoObjetos<T>> void storeObjects(List<T> objects) {
+        PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tran = pm.currentTransaction();
+        try {
+            tran.begin();
+            pm.makePersistentAll(objects);
+            tran.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (tran.isActive()) {
+                tran.rollback();
+                System.err.println("Transaction rolled back");
+            }
+            pm.close();
+        }
+    }
+
+    /**
+     * Un metodo para actualizar un objecto en el base de datos. Hay que implemntar
+     * el InfoObjetos y sus metodos
      *
      * @param objectClass El tipo de object que estas actualizando
      * @param object      El instancia del objecto
      * @param <T>         El tipo de objecto
      * @return <code>T/F</code> dependiante de si ha actualizado el objecto
      */
-    public <T extends InfoObjetos> boolean updateObjectByID(Class<T> objectClass, T object) {
+    public <T extends InfoObjetos<T>> boolean updateObjectByID(Class<T> objectClass, T object) {
         if (object == null) {
             return false;
         }
         String id = object.getId();
-        PersistenceManager pm = GestorBD.getPMF().getPersistenceManager();
+        PersistenceManager pm = pmf.getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         try {
             tx.begin();
@@ -208,7 +230,7 @@ public class GestorBD {
      */
     public <T> List<T> selectListaObjectos(Class<T> objectoClass) {
         List<T> resultados;
-        pm = getPMF().getPersistenceManager();
+        PersistenceManager pm = pmf.getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         try {
             tx.begin();
@@ -238,18 +260,20 @@ public class GestorBD {
      * @param object del cual se quiere seleccionar
      * @param <T>    El tipo de objecto
      */
-    public <T extends InfoObjetos> void deleteObject(T object) {
+    public <T extends InfoObjetos<T>> void deleteObject(T object) {
         if (object == null) {
             return;
         }
         try {
-            PersistenceManager pm = getPMF().getPersistenceManager();
+            PersistenceManager pm = pmf.getPersistenceManager();
             Transaction tran = pm.currentTransaction();
+            tran.begin();
             Query<? extends InfoObjetos> query = pm.newQuery(object.getClass());
             query.setFilter("id  == :id");
             query.setParameters(object.getId());
             InfoObjetos res = query.executeUnique();
             pm.deletePersistent(res);
+            tran.commit();
         } catch (Exception e) {
             log(Level.SEVERE, e.getMessage(), e);
         }
@@ -262,7 +286,7 @@ public class GestorBD {
      * @param id    objeto a seleccionar
      * @param clazz tipo del objeto
      */
-    public <T extends InfoObjetos> void deleteObjectByID(String id, Class<T> clazz) {
+    public <T extends InfoObjetos<T>> void deleteObjectByID(String id, Class<T> clazz) {
         T res = getObjectByID(id, clazz);
         deleteObject(res);
     }
@@ -273,11 +297,11 @@ public class GestorBD {
      * @param <T>      El tipo de objecto
      * @param objectos tipo de objeto a borrar
      */
-    public <T extends InfoObjetos> void deleteObjectsInList(List<T> objectos) {
+    public <T extends InfoObjetos<T>> void deleteObjectsInList(List<T> objectos) {
         if (objectos == null || objectos.isEmpty()) {
             return;
         }
-        pm = getPMF().getPersistenceManager();
+        PersistenceManager pm = pmf.getPersistenceManager();
         Transaction tran = pm.currentTransaction();
         try {
             tran.begin();
@@ -285,7 +309,7 @@ public class GestorBD {
                 Query<? extends InfoObjetos> query = pm.newQuery(obj.getClass());
                 query.setFilter("id  == :id");
                 query.setParameters(obj.getId());
-                InfoObjetos res = query.executeUnique();
+                InfoObjetos<T> res = query.executeUnique();
                 pm.deletePersistent(res);
             }
             tran.commit();
@@ -308,7 +332,7 @@ public class GestorBD {
      * @param <T>          El tipo de objecto
      * @param objectoClass tipo de objeto a borrar
      */
-    public <T extends InfoObjetos> void deleteAllObjectsByClass(Class<T> objectoClass) {
+    public <T extends InfoObjetos<T>> void deleteAllObjectsByClass(Class<T> objectoClass) {
         List<T> tempList = this.selectListaObjectos(objectoClass);
         if (tempList != null) {
             deleteObjectsInList(tempList);
