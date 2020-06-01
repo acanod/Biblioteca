@@ -4,6 +4,9 @@ jobs:
   include:
     - name: "Java 13"
       jdk: openjdk13
+
+services:
+sqlite
 cache:
   directories:
     - $HOME/.m2
