@@ -100,7 +100,7 @@ public class GestorBD {
 
         Transaction transaction = null;
         try {
-            PersistenceManager pm = pmf.getPersistenceManager();
+            pm = getPMF().getPersistenceManager();
             transaction = pm.currentTransaction();
             transaction.begin();
             pm.setIgnoreCache(true);
@@ -127,7 +127,7 @@ public class GestorBD {
      * @param objects objectos a guardar
      */
     public static <T extends InfoObjetos<T>> void storeObjects(List<T> objects) {
-        PersistenceManager pm = pmf.getPersistenceManager();
+        PersistenceManager pm = getPMF().getPersistenceManager();
         Transaction tran = pm.currentTransaction();
         try {
             tran.begin();
@@ -158,7 +158,7 @@ public class GestorBD {
             return false;
         }
         String id = object.getId();
-        PersistenceManager pm = pmf.getPersistenceManager();
+        PersistenceManager pm = GestorBD.getPMF().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         try {
             tx.begin();
@@ -197,7 +197,7 @@ public class GestorBD {
      */
     public <T> T getObjectByID(String id, Class<T> objectClass) {
         T resultado = null;
-        PersistenceManager pm = pmf.getPersistenceManager();
+        PersistenceManager pm = GestorBD.getPMF().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         try {
             tx.begin();
@@ -230,7 +230,7 @@ public class GestorBD {
      */
     public <T> List<T> selectListaObjectos(Class<T> objectoClass) {
         List<T> resultados;
-        PersistenceManager pm = pmf.getPersistenceManager();
+        PersistenceManager pm = GestorBD.getPMF().getPersistenceManager();
         Transaction tx = pm.currentTransaction();
         try {
             tx.begin();
@@ -265,7 +265,7 @@ public class GestorBD {
             return;
         }
         try {
-            PersistenceManager pm = pmf.getPersistenceManager();
+            PersistenceManager pm = GestorBD.getPMF().getPersistenceManager();
             Transaction tran = pm.currentTransaction();
             tran.begin();
             Query<? extends InfoObjetos> query = pm.newQuery(object.getClass());
