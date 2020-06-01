@@ -6,7 +6,12 @@ jobs:
       jdk: openjdk13
 
 services:
-sqlite
+  - sqlite
+
 cache:
   directories:
     - $HOME/.m2
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  - bash ./javadoc.sh
