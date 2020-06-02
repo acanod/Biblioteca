@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import es.deusto.bd.gestor.*;
 
 /**
- * Hello world!
+ * Clase principal del proyecto, donde se lanza la ventana principal
  *
  */
 public class App extends Application {
@@ -34,6 +34,11 @@ public class App extends Application {
         stage.show();
     }
 
+    /**
+     * Comentamos la creacion de datos para que no nos genere mas datos de muestra,
+     * sino en cada inicio del proyecto se generarian nuevas muestras
+     * 
+     */
     public App() {
         // CrearDatos.generarAutores();
         // CrearDatos.generarEmpleados();

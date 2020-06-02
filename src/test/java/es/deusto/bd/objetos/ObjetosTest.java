@@ -8,6 +8,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+/**
+ * Clase para probar si los objetos funcionana correctamente
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class ObjetosTest {
 
@@ -23,6 +26,9 @@ public class ObjetosTest {
     @Mock
     Libro libro;
 
+    /**
+     * Metodo para comprobar el correcto funcionamiento de autor
+     */
     @Test
     public void autorTest() {
         Autor autor2 = new Autor("nombre", 45);
@@ -33,6 +39,9 @@ public class ObjetosTest {
         assertEquals(autor2.getNombre(), libro.getAutor());
     }
 
+    /**
+     * Metodo para comprobar el correcto funcionamiento de empleado
+     */
     @Test
     public void empleadosTest() {
         libreria.setNombre("nombre");
@@ -43,6 +52,9 @@ public class ObjetosTest {
         assertEquals("nombre", empleado.getLibreria());
     }
 
+    /**
+     * Metodo para comprobar el correcto funcionamiento de libro
+     */
     @Test
     public void libroTest() {
         libreria.setNombre("nombre");

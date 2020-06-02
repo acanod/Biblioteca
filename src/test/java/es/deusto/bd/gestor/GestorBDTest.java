@@ -13,6 +13,9 @@ import es.deusto.bd.objetos.Empleado;
 import es.deusto.bd.objetos.Libreria;
 import es.deusto.bd.objetos.Libro;
 
+/**
+ * Clase test que comprueba que la conexion con la base de datos
+ */
 public class GestorBDTest {
 
     private Autor autor;
@@ -20,6 +23,10 @@ public class GestorBDTest {
     private Empleado empleado;
     private Libro libro;
 
+    /**
+     * Antes de hacer los test los objetos se instancian y se borra cualquier objeto
+     * que haya en la base de datos test
+     */
     @Before
     public void setBD() {
         GestorBD.getInstance();
@@ -34,12 +41,18 @@ public class GestorBDTest {
         libro = new Libro("titulo", "idioma", true, autor.getNombre(), libreria.getNombre());
     }
 
+    /**
+     * Comprueba si se ha podido hacer una instancia de la base de datos
+     */
     @Test
     public void getInstance() {
         assertNotNull(GestorBD.getInstance());
         assertTrue(GestorBD.getInstance().getClass().equals(GestorBD.class));
     }
 
+    /**
+     * Comprueba si se guardan bien los objetos en la base de datos
+     */
     @Test
     public void storeObjectInDBTest() {
         GestorBD.storeObjectInDB(autor);
@@ -76,6 +89,9 @@ public class GestorBDTest {
         GestorBD.getInstance().deleteAllObjectsByClass(Libro.class);
     }
 
+    /**
+     * Comprueba si se extraen bien los objetos identificados mediante su id
+     */
     @Test
     public void getObjectByIDTest() {
         GestorBD.storeObjectInDB(autor);
@@ -91,6 +107,9 @@ public class GestorBDTest {
         assertNotEquals(libro.hashCode(), GestorBD.getInstance().getObjectByID(libro.getId(), Libro.class).hashCode());
     }
 
+    /**
+     * Comprueba si se actualizan correctamente los objetos en la base de datos
+     */
     @Test
     public void updateObjectByIDTest() {
         this.autor.setNombre("qwerty");

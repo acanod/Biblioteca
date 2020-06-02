@@ -8,6 +8,7 @@
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
+  git clone --branch=master https://github.com/acanod/Biblioteca.git acanod/Biblioteca
   cd gh-pages
   git branch gh-pages
   git checkout gh-pages
