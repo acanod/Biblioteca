@@ -1,4 +1,7 @@
 # Biblioteca
+[![codecov](https://codecov.io/gh/acanod/Biblioteca/branch/master/graph/badge.svg)](https://codecov.io/gh/acanod/Biblioteca)
+[![Build Status](https://travis-ci.org/acanod/Biblioteca.svg?branch=master)
+
 Proyecto de software y calidad
 
 ## Instalar proyecto
