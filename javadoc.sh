@@ -10,7 +10,7 @@ if [ "$TRAVIS_REPO_SLUG" == "acanod/Biblioteca" ] && [ "$TRAVIS_JDK_VERSION" == 
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
-  git clone --branch=dev https://${GITHUB_TOKEN}@github.com/acanod/Biblioteca gh-pages
+  git clone --branch=master https://${GITHUB_TOKEN}@github.com/acanod/Biblioteca gh-pages
   cd gh-pages
   git branch gh-pages
   git checkout gh-pages
