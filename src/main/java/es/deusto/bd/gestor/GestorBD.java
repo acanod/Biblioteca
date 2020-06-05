@@ -9,6 +9,9 @@ import org.datanucleus.store.query.QueryInterruptedException;
 
 import es.deusto.bd.objetos.InfoObjetos;
 
+/**
+ * Clase encargada de gestionar la base de datos
+ */
 public class GestorBD {
 
     private static GestorBD instance = null;
