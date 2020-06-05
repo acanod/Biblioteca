@@ -1,3 +1,5 @@
+if [ "$TRAVIS_REPO_SLUG" == "acanod/Biblioteca" ] && [ "$TRAVIS_JDK_VERSION" == "openjdk13" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then  
+  
   echo -e "Generating javadoc...\n"
   mvn javadoc:javadoc
 
@@ -8,7 +10,7 @@
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
-  git clone --branch=master https://github.com/acanod/Biblioteca.git acanod/Biblioteca
+  git clone --branch=dev https://${GITHUB_TOKEN}@github.com/acanod/Biblioteca gh-pages
   cd gh-pages
   git branch gh-pages
   git checkout gh-pages
@@ -28,3 +30,5 @@
   git push -fq origin gh-pages #> /dev/null
 
   echo -e "Published Javadoc to gh-pages.\n"
+
+fi  
