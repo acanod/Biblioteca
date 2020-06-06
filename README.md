@@ -20,6 +20,10 @@ En caso de que quiera añadir o modificar las tablas de la base de datos de este
 1. `mvn datanucleus:enhance`
 2. `mvn datanucleus:schema-create`
 
+## Documentación
+
+Para más información sobre la funcionalidad de las clases y métodos que hay implemetnados en el proyecto aquí esta el [enlace](https://acanod.github.io/Biblioteca/javadoc/) para la documentación.
+
 ## Herramientas
 Para la creación de este proyecto se ha utilicado:
 - Travis CI
